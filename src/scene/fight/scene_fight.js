@@ -412,7 +412,7 @@ class SceneFight extends Scene {
           window.game = this.game
             var counter = 0;
             var m = setInterval(function(){
-                if(counter != 0 ) {
+                if(this.game.scene.enemies[counter-1] && counter != 0 ) {
                     this.game.scene.enemies[counter-1].image.y += 20
                 }
                 if(this.game.scene.enemies[counter] && !this.game.scene.enemies[counter].moveDone) {
@@ -422,7 +422,7 @@ class SceneFight extends Scene {
             if(counter === this.game.scene.enemiesConfig.numLoaded + 1) {
                 clearInterval(m);
               }
-            }, 1000);
+            }, 500);
             this.enemiesTurn = false
 
             // TODO: Think a better way to shuffle
@@ -432,7 +432,7 @@ class SceneFight extends Scene {
              setTimeout(function(){
                this.game.scene.playerTurn = true
                this.game.scene.drawCard()
-             }, 6000)
+             }, 3000)
         }
     }
     enemiesAliveCheck() {

@@ -5,6 +5,10 @@ class Attack extends Card {
         this.name = "Attack"
         this.nickname = "aAtk"
         this.setup()
+        this.level = 1
+        this.damage = [0,0,0,0,0]
+        this.manaCost = [0,0,0,0,0]
+        this.atkPara  = [0,1,1.5,2,2.5]
 
 
     }
@@ -21,7 +25,7 @@ class Attack extends Card {
             done: false,
             affect: "Enemy",
             target: 1,
-            damage: this.game.hero.atk,
+            damage: Math.ceil(this.game.hero.atk * this.atkPara[this.level]) ,
             debuff: null
         }
     }

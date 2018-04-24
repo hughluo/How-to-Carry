@@ -12,7 +12,7 @@ class Enemy {
         this.mpCurrent = 0
         this.mpMax = 0
         this.mpRegen = 0
-        this.debuffCurrent = []
+        this.debuff = []
         this.bounty = 0
         this.moveDone = false
 
@@ -36,5 +36,15 @@ class Enemy {
     }
     mpRegen() {
         this.mp += mpR
+    }
+    //TODO Debuff Handler
+    debuffHandler() {
+        var d = this.debuff
+        for(var i = 0; i < d.length; i++) {
+            switch(d[i][type]) {
+                case "":
+                    break
+            }
+        }
     }
 }

@@ -4,8 +4,12 @@ class Card {
         this.name = "class card name"
         this.nickname = "class card nickname"
         this.casted = false
+        this.level = 1
         this.layoutX = - 500
         this.layoutY = - 500
+        //
+        this.damage = [0,0,0,0,0]
+        this.manaCost = [0,0,0,0,0]
 
     }
     static new(game) {
@@ -14,13 +18,12 @@ class Card {
     }
     cast() {
         //choose Enemy
-
         this.game.scene.currentAction = {
             from: this,
             done: false,
             affect: "",
             target: 0,
-            damage: 0,
+            damage: this.damage[this.level],
             debuff: null
         }
     }
