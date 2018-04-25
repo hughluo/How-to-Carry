@@ -87,6 +87,11 @@ class SceneFight extends Scene {
             },
             // enemiesSlotX: [800,950,650,1100,500],
             enemiesSlotX: [500,650,800,950,1100],
+            enemiesBuff: {
+                slotY: 200,
+                slotX: [[500, 550, 600],[650, 700, 750],[800, 850, 900],[950, 1000, 1050],[1100, 1140, 1200],],
+
+            },
             enemiesImg: {
                 startX: 500,
                 startY: 300,
@@ -248,6 +253,13 @@ class SceneFight extends Scene {
         // this.cardConfig.cardHand[5] = Attack.new(game)
     }
     update(game) {
+      for (var i = 0; i < this.enemiesConfig.numLoaded; i++) {
+          if(this.enemies[i]) {
+              this.enemies[i]['debuff'] = this.enemies[i]['debuff'].filter(d => d.duration > 0)
+          }
+      }
+
+
 
         this.cardNumUpdate()
         this.cardHandLayoutSet()
@@ -312,6 +324,7 @@ class SceneFight extends Scene {
         }
     }
     chooseEnemy() {
+      // TODO: manacost cardChoiceCheck and rechoice!
         var a = this.currentAction
         runAction:
         switch(a.affect) {
@@ -320,11 +333,17 @@ class SceneFight extends Scene {
                     config.enemyChosenMode = true
                     var t = this.currentAction.currentTarget
                     if(t != null) {
+                        this.hero.mpCurrent -= a.manaCost
                         if(a.damage != null) {
                             t.hpCurrent -= a.damage
                         }
                         if(a.debuff != null) {
-                            t.debuffCurrent.push(a.debuff)
+                            var d = a.debuff
+                            var i = this.currentAction.currentTargetSlot
+                            var j = this.enemies[i]['debuff'].length
+                            d.layoutX = this.layout.enemiesBuff.slotX[i][j]
+                            d.layoutY = this.layout.enemiesBuff.slotY
+                            t.debuff.push(d)
                         }
 
                         config.enemyChosenMode = false
@@ -347,6 +366,7 @@ class SceneFight extends Scene {
         this.cardConfig.currentCardHand = this.cardConfig.cardHand[k]
     }
     setCurrentTarget(n) {
+        this.currentAction.currentTargetSlot = n
         this.currentAction.currentTarget = this.enemies[n]
     }
     cardByNickname(nickname) {
@@ -361,9 +381,20 @@ class SceneFight extends Scene {
             this.layout.heroMp.startY)
     }
     displayEnemies() {
-        var e = this.enemies
+
         for(var i = 0; i < this.enemiesConfig.numLoaded; i++) {
             if(this.enemies[i]) {
+                var e = this.enemies
+                if(e[i]['debuff'].length > 0) {
+                    var db = e[i]['debuff']
+                    var self = this
+                    db.forEach(function(element) {
+                        if(element.duration > 0) {
+                          self.game.context.drawImage(element.image, element.layoutX, element.layoutY)
+                        }
+                    })
+                }
+
                 this.game.context.drawImage(e[i].image.image, e[i].image.x, e[i].image.y)
                 this.game.context.fillText("Hp: " + this.enemies[i].hpCurrent + "/" + this.enemies[i].hpMax,
                     this.layout.enemiesSlotX[i], this.layout.enemiesHp.slotY)
@@ -412,11 +443,25 @@ class SceneFight extends Scene {
           window.game = this.game
             var counter = 0;
             var m = setInterval(function(){
-                if(this.game.scene.enemies[counter-1] && counter != 0 ) {
-                    this.game.scene.enemies[counter-1].image.y += 20
+                var e = this.game.scene.enemies
+                if(e[counter-1] && counter != 0 ) {
+                    e[counter-1].image.y += 20
                 }
-                if(this.game.scene.enemies[counter] && !this.game.scene.enemies[counter].moveDone) {
-                      this.game.scene.enemies[counter].move()
+                if(e[counter]) {
+                    e[counter].turn()
+                }
+                //run the debuff
+                if(e[counter] && e[counter]['debuff'].length) {
+                    var d = e[counter]['debuff']
+                    e[counter]['debuff'] = e[counter]['debuff'].filter(e => e.duration > 0)
+
+                    for(var i = 0; i< e[counter]['debuff'].length; i++ ) {
+                        e[counter]['debuff'][i].target = e[counter]
+                        e[counter]['debuff'][i].run()
+                    }
+                }
+                if(e[counter] && !e[counter].moveDone) {
+                      e[counter].move()
                 }
             counter++;
             if(counter === this.game.scene.enemiesConfig.numLoaded + 1) {

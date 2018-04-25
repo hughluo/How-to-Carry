@@ -33,6 +33,7 @@ var __main = function() {
     var images = {
         //images should not be null, otherwise it wont start running
         title: 'img/title.png',
+        doneButton: 'img/button/done.png',
         //scene fight
         endTurnButton: 'img/button/end_turn.png',
         //map
@@ -46,6 +47,8 @@ var __main = function() {
         dkW:'img/dk/dk_w.png',
         dkE:'img/dk/dk_e.png',
         dkR:'img/dk/dk_r.png',
+        debuffDkQ:'img/debuff/debuff_dk_q.png',
+        debuffDkW:'img/debuff/debuff_dk_w.png',
         //fv images
         fv:'img/fv/fv.png',
         //fvBg:'img/dk/dk_bg.jpg',
@@ -58,11 +61,11 @@ var __main = function() {
         bTimelock:'img/buff/b_timelock.png',
         bEnvenomedWeapon:'img/buff/b_envenomed_weapon.png',
         //enemies
-        kobold:'img/enemies/kobold.png',
-        koboldSoldier:'img/enemies/kobold_soldier.png',
-        koboldForeman:'img/enemies/kobold_foreman.png',
+        kobold:'img/enemy/kobold.png',
+        koboldSoldier:'img/enemy/kobold_soldier.png',
+        koboldForeman:'img/enemy/kobold_foreman.png',
         //card
-        aAtk:'img/cards/a_atk.png'
+        aAtk:'img/card/a_atk.png',
     }
 
     var game = Game.instance(30, images, function(g){

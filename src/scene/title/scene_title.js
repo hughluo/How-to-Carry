@@ -14,10 +14,34 @@ class SceneTitle extends Scene {
     }
 
     setup(game) {
-        // this.game.registerAction('g', function(){
-        //     var s = SceneFight.new(game)
-        //     game.replaceScene(s)
-        // })
+        progress.game = this.game
+        this.layout = {
+            buff: {
+                startX: 20,
+                startY: 20,
+                endX: 1020,
+                endY: 70,
+                singleX: 40,
+                singleY: 40,
+                slotX: [20, 70, 120, 170, 220, 270, 320, 370],
+            },
+            heroHp: {
+                startX: 200,
+                startY: 170,
+            },
+            heroMp: {
+                startX: 200,
+                startY: 200,
+            },
+            heroImg: {
+                startX: 100,
+                startY: 200,
+                endX: 350,
+                endY: 450,
+                singleX: 250,
+                singleY: 250,
+            },
+        }
         this.game.canvas.addEventListener('mouseup',selectHero, false)
         //Choose
         function selectHero(e) {
@@ -26,7 +50,8 @@ class SceneTitle extends Scene {
             if(chosen(x, y, 550, 565, 256, 144)){
                 var hero = DragonKnight.new(game)
                 game.hero = hero
-                var s = SceneMap.new(game, hero)
+                // var s = SceneMap.new(game, hero)
+                var s = SceneUpgrade.new(game)
                 game.replaceScene(s)
                 this.removeEventListener('mouseup', selectHero, false)
             }

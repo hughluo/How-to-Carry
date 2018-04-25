@@ -1,13 +1,16 @@
-class Debuff {
+class DebuffDkW extends Debuff {
   constructor(game, level) {
+      super(game, level)
       this.game = game
       this.alive = true
-      this.name = ""
-      this.nickname = ""
+      this.name = "Dragon Tail"
+      this.nickname = "debuffDkW"
       this.image = this.game.imageByName(this.nickname,0 ,0).image
+      this.layoutX = 0
+      this.layoutY = 0
       this.target = null
       this.level = level
-      this.durationByLevel = [0,0,0,0,0]
+      this.durationByLevel = [0,2,2,3,3]
       this.damageByLevel = [0,0,0,0,0]
       this.duration = this.durationByLevel[this.level]
       this.damage = this.damageByLevel[this.level]
@@ -18,8 +21,8 @@ class Debuff {
       return i
   }
   run () {
-      t = this.target
-      t.hpCurrent -= this.damage
+      var t = this.target
+      t.moveDone = true
       this.duration --
   }
 }

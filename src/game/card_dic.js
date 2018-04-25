@@ -4,4 +4,8 @@ var cardDic = {
             var obj = Attack.new(game)
             return obj
           },
+    dkW: function(game) {
+            var obj = DkW.new(game)
+            return obj
+          },
 }

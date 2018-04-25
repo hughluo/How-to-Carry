@@ -1,7 +1,10 @@
 class SceneMap extends Scene {
+  //// TODO: restruct scenemap like scene upgrade
     constructor(game, hero) {
         super(game)
         this.name = "map"
+        this.chooseDone = false
+        this.chosenStage = "foo"
         //elements to draw
         this.elements = []
         this.game = game
@@ -10,19 +13,22 @@ class SceneMap extends Scene {
         this.enemiesObj = {}
         this.game.map = this.game.imageByName('map', 0, this.game.canvas.height - this.game.images.map.height)
 
-
     }
     static new(game, hero) {
         var i = new this(game, hero)
         return i
     }
 
-    addEnemyToObj() {
-        for (var i = 0; i < arguments.length; i++) {
-          this.enemiesObj[i] = arguments[i]
-        }
-    }
     setup(game) {
+        this.layout = {
+            doneButton: {
+                startX: 1200,
+                startY: 700,
+                width: 90,
+                height: 27,
+              },
+        }
+
         this.game.registerContAction('w', function(){
             game.map.y += 20
             if(game.map.y > 0) {
@@ -48,41 +54,113 @@ class SceneMap extends Scene {
             }
         })
 
-        this.game.canvas.addEventListener('mouseup',selectStage, false)
-
-        function selectStage(e) {
-            var x = e.offsetX
-            var y = e.offsetY
-            if(chosen(x, y, 500, 300, 128, 128)){
-
-                //small camp random
-                var enemiesCamp = randomChooseAmong("koboldCamp")
-                switch(enemiesCamp) {
-                    case"koboldCamp":
-                    var k1 = Kobold.new(game)
-                    var k2 = Kobold.new(game)
-                    var k3 = Kobold.new(game)
-                    var kS = KoboldSoldier.new(game)
-                    var kF = KoboldForeman.new(game)
-                    game.scene.addEnemyToObj(k1, k2, k3, kS, kF)
-                    break
-                }
-                //clear all key setting before change to the next scene
-                game.clearRegisterAction()
-                game.clearRegisterContAction()
-                var s = SceneFight.new(game, game.hero, game.scene.enemiesObj)
-                game.replaceScene(s)
-                this.removeEventListener('mouseup',selectStage, false)
-
-            }
-        }
-        //TODO: find some image and draw as stage icon
         this.elements.push(this.game.imageByName("mapTower", 500, 300))
+
+
+        //TODO: find some image and draw as stage icon
+
 
     }
     draw() {
+        var l = this.layout
+        this.game.context.drawImage(this.game.images.doneButton, l.doneButton.startX, l.doneButton.startY)
+        switch(this.chosenStage) {
+            case "foo":
+                this.game.context.fillText("Choose stage!", 50, 50)
+                break
+            case "stage1":
+                this.game.context.fillText("Stage 1, Click Fight!", 50, 50)
+                break
+            case "heroW":
+                this.game.context.fillText("You have chosen W to upgrade", 50, 50)
+                break
+            case "heroE":
+                this.game.context.fillText("You have chosen E to upgrade", 50, 50)
+                break
+        }
     }
 
     update() {
+        var self = this
+        log("update", this.chooseDone)
+          if(!self.chooseDone) {
+              self.game.canvas.addEventListener('mouseup', this.selectStage, false)
+          } else {
+              self.game.canvas.addEventListener('mouseup', doneStageChosen, false)
+              //Choose
+              function doneStageChosen(e) {
+                  log("done")
+                  var x = e.offsetX
+                  var y = e.offsetY
+                  var xt = self.layout.doneButton.startX
+                  var yt = self.layout.doneButton.startY
+                  var w = self.layout.doneButton.width
+                  var h = self.layout.doneButton.height
+                  if(chosen(x, y, xt, yt, w, h)){
+                      if(self.chooseDone) {
+                          self.initStage(self.game)
+                          self.game.canvas.removeEventListener('mouseup', self.selectStage, false)
+                          self.game.canvas.removeEventListener('mouseup', doneStageChosen, false)
+                          var s = SceneFight.new(self.game, self.hero, self.enemiesObj)
+                          self.game.replaceScene(s)
+                      } else {
+                          log("Not done choose stage yet!")
+                      }
+                  }
+              }
+          }
+
+          // if(chooseDone) {
+          //     //clear all key setting before change to the next scene
+          //     game.clearRegisterAction()
+          //     game.clearRegisterContAction()
+          //     game.canvas.removeEventListener('mouseup', selectStage, false)
+          //     var s = SceneFight.new(game, game.hero, game.scene.enemiesObj)
+          //     game.replaceScene(s)
+          // }
+    }
+    addEnemyToObj() {
+        for (var i = 0; i < arguments.length; i++) {
+          this.enemiesObj[i] = arguments[i]
+        }
+    }
+    initStage(game) {
+        switch(this.chosenStage) {
+            case "stage1":
+                var enemiesCamp = randomChooseAmong("koboldCamp")
+                switch(enemiesCamp) {
+                    case"koboldCamp":
+                        var k1 = Kobold.new(game)
+                        var k2 = Kobold.new(game)
+                        var k3 = Kobold.new(game)
+                        var kS = KoboldSoldier.new(game)
+                        var kF = KoboldForeman.new(game)
+                        this.addEnemyToObj(k1, k2, k3, kS, kF)
+                        break
+
+              }
+        }
+    }
+    selectStage(e) {
+        var x = e.offsetX
+        var y = e.offsetY
+        log(x, y, this.chooseDone)
+        if(chosen(x, y, 500, 300, 128, 128)){
+            progress.game.scene.chosenStage = "stage1"
+            progress.game.scene.chooseDone = true
+            // var enemiesCamp = randomChooseAmong("koboldCamp")
+            // switch(enemiesCamp) {
+            //     case"koboldCamp":
+            //     var k1 = Kobold.new(progress.game)
+            //     var k2 = Kobold.new(progress.game)
+            //     var k3 = Kobold.new(progress.game)
+            //     var kS = KoboldSoldier.new(progress.game)
+            //     var kF = KoboldForeman.new(progress.game)
+            //     progress.game.enemies = progress.game.scene.addEnemyToObj(k1, k2, k3, kS, kF)
+            //     progress.game.scene.chooseDone = true
+            //     break
+            // }
+
+        }
     }
 }

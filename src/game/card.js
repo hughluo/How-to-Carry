@@ -5,6 +5,7 @@ class Card {
         this.nickname = "class card nickname"
         this.casted = false
         this.level = 1
+        this.image = this.game.imageByName(this.nickname,0 ,0).image
         this.layoutX = - 500
         this.layoutY = - 500
         //

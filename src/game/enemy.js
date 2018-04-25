@@ -21,10 +21,13 @@ class Enemy {
         var i = new this(game)
         return i
     }
+    turn() {
+        this.image.y -= 20
+    }
     attack(){
         this.game.hero.hpCurrent -= this.atk
-        this.game.context.fillText(this.name + " attacked you! Cause " + this.atk + " damage!", 300, 50)
-        this.image.y -= 20
+        // this.game.context.fillText(this.name + " attacked you! Cause " + this.atk + " damage!", 300, 50)
+
 
     }
     move() {
