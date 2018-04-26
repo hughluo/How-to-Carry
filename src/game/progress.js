@@ -7,6 +7,11 @@ var progress = {
     heroE: "0",
     heroR: "0",
     quellingBlade: false,
+    battleFury: false,
+    javelin: false,
+    skullBasher: false,
+    morbidMask: false,
+    maskOfMadness: false,
     cardSet: {
     0: "dkW",
     1: "dkW",

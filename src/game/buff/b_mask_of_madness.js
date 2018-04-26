@@ -1,19 +1,17 @@
-class IMaskOfMadness extends Item {
-  constructor(game) {
-      super(game)
-      this.game = game
-      this.name = "Mask Of Madness"
-      this.nickname = "maskOfMadness"
-      this.price = 1975
-      this.available = !progress[this.nickname]
-      this.hasCard = true
-  }
-  enable() {
-      if(!progress[this.nickname]) {
-          progress[this.nickname] = true
-          var b = BMaskOfMadness.new(this.game)
-          var len = Object.keys(this.game.hero.buff).length
-          this.game.hero.buff[len] = b
-      }
-  }
+class BMaskOfMadness extends Buff {
+    constructor(game) {
+        super(game)
+        this.image = this.game.images.buffMaskOfMadness
+        this.granted = false
+    }
+    grant() {
+        var m = this.game.hero.atkModify
+        var len = Object.keys(m).length
+        m[len] = {
+            nickname: "maskOfMadness",
+            type: "lifesteal",
+            lifesteal: 0.15,
+        }
+
+    }
 }

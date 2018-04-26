@@ -21,6 +21,7 @@ class Attack extends Card {
         //choose Enemy
         log(this.game.hero.atkPara)
         this.game.scene.currentAction = {
+            type: "Attack",
             from: this,
             done: false,
             manaCost: this.manaCost[this.level],

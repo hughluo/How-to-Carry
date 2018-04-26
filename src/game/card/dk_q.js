@@ -20,6 +20,7 @@ class DkQ extends Card {
         //choose Enemy
         //TODO:structre debuff
         this.game.scene.currentAction = {
+            type: "Magic",
             from: this,
             done: false,
             manacost: this.manaCost[this.level],

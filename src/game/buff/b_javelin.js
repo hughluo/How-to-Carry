@@ -8,9 +8,10 @@ class BJavelin extends Buff {
         var m = this.game.hero.atkModify
         var len = Object.keys(m).length
         m[len] = {
-            ncikname: "javelin"
-            damage: 10
-            chance: 0.25
+            nickname: "javelin",
+            type: "damage",
+            damage: 10,
+            chance: 0.25,
         }
 
     }

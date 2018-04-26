@@ -8,10 +8,9 @@ class BMorbidMask extends Buff {
         var m = this.game.hero.atkModify
         var len = Object.keys(m).length
         m[len] = {
-            ncikname: "morbidMask"
-            damage: 0
-            chance: 1
-            lifesteal: 0.15
+            nickname: "morbidMask",
+            type: "lifesteal",
+            lifesteal: 0.15,
         }
     }
 }

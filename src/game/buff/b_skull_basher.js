@@ -8,11 +8,11 @@ class BSkullBasher extends Buff {
         var m = this.game.hero.atkModify
         var len = Object.keys(m).length
         m[len] = {
-            nickname: "skullBasher"
-            damage: 10
-            chance: 0.25
-            // TODO: debuff...
-            // debuff: DSkullBasher.new(this.game, 0)
+            nickname: "skullBasher",
+            type: "stun",
+            duration: 1,
+            damage: 10,
+            chance: 0.25,
         }
 
     }

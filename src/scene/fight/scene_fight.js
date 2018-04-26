@@ -296,7 +296,7 @@ class SceneFight extends Scene {
                 this.chooseCard()
         }
         if(this.currentAction != null) {
-                this.chooseEnemy()
+                this.useCard()
         }
     }
 
@@ -324,7 +324,7 @@ class SceneFight extends Scene {
             this.cardConfig.currentCardHand = null
         }
     }
-    chooseEnemy() {
+    useCard() {
       // TODO: manacost cardChoiceCheck and rechoice!
         var a = this.currentAction
         runAction:

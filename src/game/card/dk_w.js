@@ -20,6 +20,7 @@ class DkW extends Card {
         //choose Enemy
         //TODO:structre debuff
         this.game.scene.currentAction = {
+            type: "Magic",
             from: this,
             done: false,
             manaCost: this.manaCost[this.level],

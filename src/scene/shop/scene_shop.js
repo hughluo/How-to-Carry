@@ -28,7 +28,7 @@ class SceneShop extends Scene {
                 notice: {
                     startX: 50,
                     startY: 130,
-                }
+                },
             },
             buyButton: {
                 startX: 1100,
@@ -121,12 +121,16 @@ class SceneShop extends Scene {
             if(this.chosenItem == "foo") {
                 this.game.context.fillText("Choose an item to buy!", l.hint.chosen.startX, l.hint.chosen.startY)
             } else {
-                  if(this.chosenItem.available) {
-                      this.game.context.fillText("You have " + this.game.money + " gold, pay " + this.chosenItem.price + " to buy " + this.chosenItem.name,
-                          l.hint.chosen.startX, l.hint.chosen.startY)
+                  if(this.chosenItem.price > this.game.money){
+                      this.game.context.fillText("insufficent Gold, please farm harder!", l.hint.chosen.startX, l.hint.chosen.startY)
                   } else {
-                      this.game.context.fillText(this.chosenItem.name + " is not available! Hint: Some items can only bought once.",
-                          l.hint.chosen.startX, l.hint.chosen.startY)
+                      if(this.chosenItem.available) {
+                          this.game.context.fillText("You have " + this.game.money + " gold, pay " + this.chosenItem.price + " to buy " + this.chosenItem.name,
+                              l.hint.chosen.startX, l.hint.chosen.startY)
+                      } else {
+                          this.game.context.fillText(this.chosenItem.name + " is not available! Hint: Some items can only bought once.",
+                              l.hint.chosen.startX, l.hint.chosen.startY)
+                      }
                   }
           }
     }
@@ -146,15 +150,15 @@ class SceneShop extends Scene {
         } else if (chosen(x, y, l.quellingBlade.startX, l.quellingBlade.startY, w, h)) {
             self.chosenItem = IQuellingBlade.new(self.game)
         } else if (chosen(x, y, l.battleFury.startX, l.battleFury.startY, w, h)) {
-            self.chosenItem = "battleFury"
+            self.chosenItem = IBattleFury.new(self.game)
         } else if (chosen(x, y, l.morbidMask.startX, l.morbidMask.startY, w, h)) {
-            self.chosenItem = "morbidMask"
+            self.chosenItem = IMorbidMask.new(self.game)
         } else if (chosen(x, y, l.maskOfMadness.startX, l.maskOfMadness.startY, w, h)) {
-            self.chosenItem = "maskOfMadness"
+            self.chosenItem = IMaskOfMadness.new(self.game)
         } else if (chosen(x, y, l.javelin.startX, l.javelin.startY, w, h)) {
-            self.chosenItem = "javelin"
+            self.chosenItem = IJavelin.new(self.game)
         } else if (chosen(x, y, l.skullBasher.startX, l.skullBasher.startY, w, h)) {
-            self.chosenItem = "skullBasher"
+            self.chosenItem = ISkullBasher.new(self.game)
         }
       }
       confirmBuy(e) {
@@ -178,11 +182,11 @@ class SceneShop extends Scene {
                   default:
                       log("should done buy")
                       if(self.chosenItem.available) {
-                          g.money -= self.chosenItem.price
-                          self.chosenItem.enable()
-                          self.chosenItem = "foo"
-                      } else {
-
+                          if(self.chosenItem.price <= g.money) {
+                              g.money -= self.chosenItem.price
+                              self.chosenItem.enable()
+                              self.chosenItem = "foo"
+                          }
                       }
               }
           }
