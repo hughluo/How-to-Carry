@@ -73,8 +73,12 @@ var __main = function() {
         fvE:'img/fv/fv_e.png',
         fvR:'img/fv/fv_r.png',
         //buff
-        bTimelock:'img/buff/b_timelock.png',
-        bEnvenomedWeapon:'img/buff/b_envenomed_weapon.png',
+        buffBattleFury: 'img/buff/buff_battle_fury.png',
+        buffJavelin: 'img/buff/buff_javelin.png',
+        buffMaskOfMadness: 'img/buff/buff_mask_of_madness.png',
+        buffMorbidMask: 'img/buff/buff_morbid_mask.png',
+        buffQuellingBlade: 'img/buff/buff_quelling_blade.png',
+        buffSkullBasher: 'img/buff/buff_skull_basher.png',
         //enemies
         kobold:'img/enemy/kobold.png',
         koboldSoldier:'img/enemy/kobold_soldier.png',

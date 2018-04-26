@@ -19,14 +19,14 @@ class Attack extends Card {
 
     cast() {
         //choose Enemy
-
+        log(this.game.hero.atkPara)
         this.game.scene.currentAction = {
             from: this,
             done: false,
             manaCost: this.manaCost[this.level],
             affect: "Enemy",
             target: 1,
-            damage: Math.ceil(this.game.hero.atk * this.atkPara[this.level]) ,
+            damage: Math.ceil(this.game.hero.atk * this.game.hero.atkPara * this.atkPara[this.level]) ,
             debuff: null
         }
     }

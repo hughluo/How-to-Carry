@@ -1,5 +1,6 @@
 class Buff {
-  constructor() {
+  constructor(game) {
+      this.game = game
 
   }
   static new(game) {

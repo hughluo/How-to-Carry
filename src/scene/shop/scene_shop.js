@@ -5,6 +5,7 @@ class SceneShop extends Scene {
         this.game = game
         this.setup(game)
         this.elements = []
+        // TODO: chosenItem should be an instance of class item
         this.chosenItem = "foo"
 
     }
@@ -80,12 +81,18 @@ class SceneShop extends Scene {
             },
         }
         this.game.canvas.addEventListener('mouseup',this.backToMap, false)
+        this.game.canvas.addEventListener('mouseup',this.confirmBuy, false)
         this.game.canvas.addEventListener('mouseup',this.chooseItem, false)
         //Choose
 
     }
     update() {
-    
+        // switch(chosenItem) {
+        //     case "foo":
+        //         break
+        //     case
+        // }
+
     }
     draw() {
 
@@ -110,14 +117,18 @@ class SceneShop extends Scene {
         //
         this.game.context.fillText("Click Map to return!", l.hint.return.startX, l.hint.return.startY)
         this.game.context.fillText("Notice: Some items grant you buff(s), some items add card(s), some items do both!", l.hint.notice.startX, l.hint.notice.startY)
-        switch(this.chosenItem) {
-            case "foo":
+
+            if(this.chosenItem == "foo") {
                 this.game.context.fillText("Choose an item to buy!", l.hint.chosen.startX, l.hint.chosen.startY)
-                break
-            default:
-                this.game.context.fillText("You have " + this.game.money + " gold, pay" +  " to buy " + this.chosenItem,
-                    l.hint.chosen.startX, l.hint.chosen.startY)
-        }
+            } else {
+                  if(this.chosenItem.available) {
+                      this.game.context.fillText("You have " + this.game.money + " gold, pay " + this.chosenItem.price + " to buy " + this.chosenItem.name,
+                          l.hint.chosen.startX, l.hint.chosen.startY)
+                  } else {
+                      this.game.context.fillText(this.chosenItem.name + " is not available! Hint: Some items can only bought once.",
+                          l.hint.chosen.startX, l.hint.chosen.startY)
+                  }
+          }
     }
     chooseItem(e) {
         var x = e.offsetX
@@ -133,7 +144,7 @@ class SceneShop extends Scene {
         } else if (chosen(x, y, l.clarity.startX, l.clarity.startY, w, h)) {
             self.chosenItem = "clarity"
         } else if (chosen(x, y, l.quellingBlade.startX, l.quellingBlade.startY, w, h)) {
-            self.chosenItem = "quellingBlade"
+            self.chosenItem = IQuellingBlade.new(self.game)
         } else if (chosen(x, y, l.battleFury.startX, l.battleFury.startY, w, h)) {
             self.chosenItem = "battleFury"
         } else if (chosen(x, y, l.morbidMask.startX, l.morbidMask.startY, w, h)) {
@@ -147,25 +158,32 @@ class SceneShop extends Scene {
         }
       }
       confirmBuy(e) {
+          var g = progress.game
           var self = progress.game.scene
-          log(self)
           var x = e.offsetX
           var y = e.offsetY
           var xT = self.layout.buyButton.startX
-          var yT = self.layout.buyButton.startYQ
+          var yT = self.layout.buyButton.startY
           var w = self.layout.buyButton.width
           var h = self.layout.buyButton.height
-          if(chosen(x, y, xT, yQ, w, h)) {
+          log(x, y, xT, yT, w, h)
+          if(chosen(x, y, xT, yT, w, h)) {
               switch(self.chosenItem) {
                   case "foo":
-                      //print have not buy
+                      log("print choose item first")
                       break
                   case "already":
-                      //print already buy
+                      log("print alr buy")
                       break
                   default:
-                      //create obj
-                      //Print success buy
+                      log("should done buy")
+                      if(self.chosenItem.available) {
+                          g.money -= self.chosenItem.price
+                          self.chosenItem.enable()
+                          self.chosenItem = "foo"
+                      } else {
+
+                      }
               }
           }
           self.chooseDone = true
@@ -186,5 +204,8 @@ class SceneShop extends Scene {
                 var s = SceneMap.new(g, g.hero)
                 g.replaceScene(s)
             }
+        }
+        addItemObj(nickname) {
+
         }
 }

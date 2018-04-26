@@ -8,12 +8,15 @@ class Hero {
         this.img = null
         this.alive = true
         this.atk = 0
+        this.atkPara = 1
+        this.atkModify = {}
         this.hpCurrent = 0
         this.hpMax = 0
         this.hpRegen = 0
         this.mpCurrent = 0
         this.mpMax = 0
         this.mpRegen = 0
+        this.buff = {}
         this.setup(game)
     }
     static new(game, heroName) {

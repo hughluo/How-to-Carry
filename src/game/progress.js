@@ -6,6 +6,7 @@ var progress = {
     heroW: "0",
     heroE: "0",
     heroR: "0",
+    quellingBlade: false,
     cardSet: {
     0: "dkW",
     1: "dkW",

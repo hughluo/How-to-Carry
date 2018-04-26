@@ -260,7 +260,7 @@ class SceneFight extends Scene {
       }
 
 
-
+        this.grantBuff()
         this.cardNumUpdate()
         this.cardHandLayoutSet()
         this.cardHandCastedCheck()
@@ -281,6 +281,7 @@ class SceneFight extends Scene {
         this.displayTurn()
         this.displayHint()
         this.displayHero()
+        this.displayBuff()
         this.displayEnemies()
         this.displayCardNum()
         this.displayCardHand()
@@ -379,6 +380,18 @@ class SceneFight extends Scene {
             this.layout.heroHp.startY)
         this.game.context.fillText("Mp: " + this.hero.mpCurrent + "/" + this.hero.mpMax, this.layout.heroMp.startX,
             this.layout.heroMp.startY)
+    }
+    displayBuff() {
+        var l = this.game.scene.layout
+        var buffs = this.game.hero.buff
+        var len = Object.keys(buffs).length
+        for(var i = 0; i < len; i++) {
+            var t = buffs[i].image
+            var x = l.buff.slotX[i]
+            var y = l.buff.startY
+            this.game.context.drawImage(t, x, y)
+        }
+
     }
     displayEnemies() {
 
@@ -490,6 +503,17 @@ class SceneFight extends Scene {
             if(this.enemies[i]&&!this.enemies[i].alive) {
                 delete this.enemies[i]
                 this.enemiesConfig.numCurrent --
+            }
+        }
+    }
+    grantBuff() {
+        var l = this.game.scene.layout
+        var buffs = this.game.hero.buff
+        var len = Object.keys(buffs).length
+        for(var i = 0; i < len; i++) {
+            if(!buffs[i].granted) {
+                buffs[i].grant()
+                buffs[i].granted = true
             }
         }
     }
