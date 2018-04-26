@@ -334,27 +334,10 @@ class SceneFight extends Scene {
                     config.enemyChosenMode = true
                     var t = this.currentAction.currentTarget
                     if(t != null) {
-                        this.hero.mpCurrent -= a.manaCost
-                        if(a.damage != null) {
-                            t.hpCurrent -= a.damage
-                        }
-                        if(a.debuff != null) {
-                            var d = a.debuff
-                            var i = this.currentAction.currentTargetSlot
-                            var j = this.enemies[i]['debuff'].length
-                            d.layoutX = this.layout.enemiesBuff.slotX[i][j]
-                            d.layoutY = this.layout.enemiesBuff.slotY
-                            t.debuff.push(d)
-                        }
-
-                        config.enemyChosenMode = false
-                        this.currentAction.currentTarget = null
-                        a.target -= 1
+                        this.useCardToEnemy()
                     } else {
                           break runAction
                     }
-
-
                 }
                 //casted
                 this.currentAction.from.casted = true
@@ -362,6 +345,63 @@ class SceneFight extends Scene {
                 break
         }
     }
+    useCardToEnemy() {
+        var a = this.currentAction
+        var t = a.currentTarget
+        switch(a.type) {
+            case "Magic":
+                this.hero.mpCurrent -= a.manaCost
+                if(a.damage != null) {
+                    t.hpCurrent -= a.damage
+                }
+                if(a.debuff != null) {
+                    var d = a.debuff
+                    var i = this.currentAction.currentTargetSlot
+                    var j = this.enemies[i]['debuff'].length
+                    d.layoutX = this.layout.enemiesBuff.slotX[i][j]
+                    d.layoutY = this.layout.enemiesBuff.slotY
+                    t.debuff.push(d)
+                }
+                break
+            case "Attack":
+                this.hero.mpCurrent -= a.manaCost
+                if(a.damage != null) {
+                    t.hpCurrent -= a.damage
+                }
+                //handle attack modifier
+                var m = this.game.hero.atkModify
+                var len = Object.keys(m).length
+                for (var i = 0; i < len; i++) {
+                    switch(m[i].type) {
+                        case "damage":
+                            if(chanceProc(m[i].chance)) {
+                                t.hpCurrent -= m[i].damage
+                            }
+                            break
+                        case "lifesteal":
+                            this.hero.hpCurrent += Math.ceil(a.damage * m[i].lifesteal)
+                            break
+                        case "stun":
+                            if(chanceProc(m[i].chance)) {
+                                t.hpCurrent -= m[i].damage
+                                var d = AStun.new(this.game, 0, m[i].nickname, m[i].duration)
+                                var i = this.currentAction.currentTargetSlot
+                                var j = this.enemies[i]['debuff'].length
+                                d.layoutX = this.layout.enemiesBuff.slotX[i][j]
+                                d.layoutY = this.layout.enemiesBuff.slotY
+                                log(d)
+                                t.debuff.push(d)
+                            }
+                            break
+                    }
+                }
+                break
+        }
+        config.enemyChosenMode = false
+        this.currentAction.currentTarget = null
+        a.target -= 1
+    }
+
     setCurrentCard(n) {
         var k = this.cardConfig.cardHandSlot[n]
         this.cardConfig.currentCardHand = this.cardConfig.cardHand[k]

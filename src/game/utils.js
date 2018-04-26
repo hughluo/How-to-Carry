@@ -35,3 +35,12 @@ var drawByName = function(name) {
     var y = g.scene.layout[name].startY
     g.context.drawImage(i, x, y)
 }
+var chanceProc = function(chance) {
+    var c = chance * 100
+    var r = randomBetween(0, 100)
+    if(r <= c) {
+        return true
+    } else {
+        return false
+    }
+}
