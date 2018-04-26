@@ -149,11 +149,13 @@ class SceneUpgrade extends Scene {
         var h = self.layout.heroAbi.height
         if(chosen(x, y, xT, yQ, w, h)) {
             self.chosenAbility = "heroQ"
+            self.chooseDone = true
         } else if (chosen(x, y, xT, yW, w, h)) {
             self.chosenAbility = "heroW"
+            self.chooseDone = true
         } else if (chosen(x, y, xT, yE, w, h)) {
             self.chosenAbility = "heroE"
+            self.chooseDone = true
         }
-        self.chooseDone = true
       }
 }

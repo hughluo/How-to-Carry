@@ -27,3 +27,11 @@ var getKeyByValue = function(object, value) {
 var utilsCheck = function() {
     log ("Nice! Utils checked!")
 }
+
+var drawByName = function(name) {
+    var g = progress.game
+    var i = g.images[name]
+    var x = g.scene.layout[name].startX
+    var y = g.scene.layout[name].startY
+    g.context.drawImage(i, x, y)
+}

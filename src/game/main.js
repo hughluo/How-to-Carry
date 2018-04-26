@@ -33,7 +33,22 @@ var __main = function() {
     var images = {
         //images should not be null, otherwise it wont start running
         title: 'img/title.png',
+        bgY: 'img/bg_yellow.png',
         doneButton: 'img/button/done.png',
+        fightButton: 'img/button/fight.png',
+        buyButton: 'img/button/buy.png',
+        mapButton: 'img/button/map.png',
+        shopButton: 'img/button/shop.png',
+        //sceneShop
+        healingSalve: 'img/item/healing_salve.png',
+        clarity: 'img/item/clarity.png',
+        tango: 'img/item/tango.png',
+        quellingBlade: 'img/item/quelling_blade.png',
+        battleFury: 'img/item/battle_fury.png',
+        morbidMask: 'img/item/morbid_mask.png',
+        maskOfMadness: 'img/item/mask_of_madness.png',
+        javelin: 'img/item/javelin.png',
+        skullBasher: 'img/item/skull_basher.png',
         //scene fight
         endTurnButton: 'img/button/end_turn.png',
         //map

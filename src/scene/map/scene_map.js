@@ -21,12 +21,18 @@ class SceneMap extends Scene {
 
     setup(game) {
         this.layout = {
-            doneButton: {
+            fightButton: {
                 startX: 1200,
                 startY: 700,
                 width: 90,
                 height: 27,
               },
+            shopButton: {
+                startX: 1100,
+                startY: 700,
+                width: 90,
+                height: 27,
+            }
         }
 
         this.game.registerContAction('w', function(){
@@ -56,6 +62,7 @@ class SceneMap extends Scene {
 
         this.elements.push(this.game.imageByName("mapTower", 500, 300))
 
+        this.game.canvas.addEventListener('mouseup', this.goToShop, false)
 
         //TODO: find some image and draw as stage icon
 
@@ -63,7 +70,8 @@ class SceneMap extends Scene {
     }
     draw() {
         var l = this.layout
-        this.game.context.drawImage(this.game.images.doneButton, l.doneButton.startX, l.doneButton.startY)
+        drawByName("fightButton")
+        drawByName("shopButton")
         switch(this.chosenStage) {
             case "foo":
                 this.game.context.fillText("Choose stage!", 50, 50)
@@ -92,14 +100,15 @@ class SceneMap extends Scene {
                   log("done")
                   var x = e.offsetX
                   var y = e.offsetY
-                  var xt = self.layout.doneButton.startX
-                  var yt = self.layout.doneButton.startY
-                  var w = self.layout.doneButton.width
-                  var h = self.layout.doneButton.height
+                  var xt = self.layout.fightButton.startX
+                  var yt = self.layout.fightButton.startY
+                  var w = self.layout.fightButton.width
+                  var h = self.layout.fightButton.height
                   if(chosen(x, y, xt, yt, w, h)){
                       if(self.chooseDone) {
                           self.initStage(self.game)
                           self.game.canvas.removeEventListener('mouseup', self.selectStage, false)
+                          self.game.canvas.removeEventListener('mouseup', self.goToShop, false)
                           self.game.canvas.removeEventListener('mouseup', doneStageChosen, false)
                           var s = SceneFight.new(self.game, self.hero, self.enemiesObj)
                           self.game.replaceScene(s)
@@ -144,23 +153,25 @@ class SceneMap extends Scene {
     selectStage(e) {
         var x = e.offsetX
         var y = e.offsetY
-        log(x, y, this.chooseDone)
         if(chosen(x, y, 500, 300, 128, 128)){
             progress.game.scene.chosenStage = "stage1"
             progress.game.scene.chooseDone = true
-            // var enemiesCamp = randomChooseAmong("koboldCamp")
-            // switch(enemiesCamp) {
-            //     case"koboldCamp":
-            //     var k1 = Kobold.new(progress.game)
-            //     var k2 = Kobold.new(progress.game)
-            //     var k3 = Kobold.new(progress.game)
-            //     var kS = KoboldSoldier.new(progress.game)
-            //     var kF = KoboldForeman.new(progress.game)
-            //     progress.game.enemies = progress.game.scene.addEnemyToObj(k1, k2, k3, kS, kF)
-            //     progress.game.scene.chooseDone = true
-            //     break
-            // }
-
+        }
+    }
+    goToShop(e) {
+        var x = e.offsetX
+        var y = e.offsetY
+        var l = progress.game.scene.layout
+        var xt = l.shopButton.startX
+        var yt = l.shopButton.startY
+        var w = l.shopButton.width
+        var h = l.shopButton.height
+        if(chosen(x, y, xt, yt, w, h)){
+            var g = progress.game
+            g.canvas.removeEventListener('mouseup', g.scene.selectStage, false)
+            g.canvas.removeEventListener('mouseup', g.scene.goToShop, false)
+            var s = SceneShop.new(g)
+            g.replaceScene(s)
         }
     }
 }

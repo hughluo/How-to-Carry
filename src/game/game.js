@@ -3,6 +3,7 @@ class Game {
         window.fps = fps
         this.name = "game"
         this.images = images
+        this.money = 600
         this.runCallback = runCallback
         //
         this.scene = null
