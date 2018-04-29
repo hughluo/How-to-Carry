@@ -4,6 +4,7 @@ class Game {
         this.name = "game"
         this.images = images
         this.money = 6000
+        this.cardSet = {}
         this.runCallback = runCallback
         //
         this.scene = null

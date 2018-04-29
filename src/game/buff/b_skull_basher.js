@@ -1,6 +1,7 @@
 class BSkullBasher extends Buff {
     constructor(game) {
         super(game)
+        this.nickname = "buffSkullBasher"
         this.image = this.game.images.buffSkullBasher
         this.granted = false
     }
@@ -12,7 +13,7 @@ class BSkullBasher extends Buff {
             type: "stun",
             duration: 1,
             damage: 10,
-            chance: 0.8,
+            chance: 0.25,
         }
 
     }

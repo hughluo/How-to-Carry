@@ -3,15 +3,16 @@ class SceneMap extends Scene {
     constructor(game, hero) {
         super(game)
         this.name = "map"
-        this.chooseDone = false
-        this.chosenStage = "foo"
+        //for demo purpose, disable stage choose. It will auto choose next stage.
+        this.chooseDone = true
+        this.chosenStage = "stage" + progress.stage
         //elements to draw
         this.elements = []
         this.game = game
         this.hero = hero
         this.setup(game)
         this.enemiesObj = {}
-        this.game.map = this.game.imageByName('map', 0, this.game.canvas.height - this.game.images.map.height)
+        this.game.map = this.game.imageByName('s' + progress.stage, 0, this.game.canvas.height - this.game.images.s0.height)
 
     }
     static new(game, hero) {
@@ -21,18 +22,39 @@ class SceneMap extends Scene {
 
     setup(game) {
         this.layout = {
+            dialog:{
+                startX: 60,
+                startY: 40,
+            },
+            hint0: {
+                startX: 100,
+                startY: 100,
+            },
+            hint1: {
+                startX: 100,
+                startY: 150,
+            },
             fightButton: {
                 startX: 1200,
                 startY: 700,
                 width: 90,
                 height: 27,
-              },
+            },
             shopButton: {
                 startX: 1100,
                 startY: 700,
                 width: 90,
                 height: 27,
-            }
+            },
+            mark: {
+                width: 50,
+                height: 50,
+            },
+            s0: {
+                startX: 1,
+                startY: 1,
+
+            },
         }
 
         this.game.registerContAction('w', function(){
@@ -43,8 +65,8 @@ class SceneMap extends Scene {
         })
         this.game.registerContAction('s', function(){
             game.map.y -= 20
-            if(game.map.y < game.canvas.height - game.images.map.height) {
-                game.map.y = game.canvas.height - game.images.map.height
+            if(game.map.y < game.canvas.height - game.images.s0.height) {
+                game.map.y = game.canvas.height - game.images.s0.height
             }
         })
         this.game.registerContAction('a', function(){
@@ -55,12 +77,12 @@ class SceneMap extends Scene {
         })
         this.game.registerContAction('d', function(){
             game.map.x -= 20
-            if(game.map.x < game.canvas.width - game.images.map.width) {
-                game.map.x = game.canvas.width - game.images.map.width
+            if(game.map.x < game.canvas.width - game.images.s0.width) {
+                game.map.x = game.canvas.width - game.images.s0.width
             }
         })
 
-        this.elements.push(this.game.imageByName("mapTower", 500, 300))
+        // this.elements.push(this.game.imageByName("mapTower", 500, 300))
 
         this.game.canvas.addEventListener('mouseup', this.goToShop, false)
 
@@ -72,51 +94,41 @@ class SceneMap extends Scene {
         var l = this.layout
         drawByName("fightButton")
         drawByName("shopButton")
+        drawByName("dialog")
         switch(this.chosenStage) {
-            case "foo":
-                this.game.context.fillText("Choose stage!", 50, 50)
+            // case "foo":
+            //     this.game.context.fillText("Choose stage!", 50, 50)
+            //     break
+            case "stage0":
+                this.game.context.fillText("As a carry, last hit is very important.", l.hint0.startX, l.hint0.startY)
+                this.game.context.fillText("So let's start with farming some lane creeps.", l.hint1.startX, l.hint1.startY)
                 break
             case "stage1":
-                this.game.context.fillText("Stage 1, Click Fight!", 50, 50)
+                this.game.context.fillText("Furthermore, farm some neutral creeps", l.hint0.startX, l.hint0.startY)
                 break
-            case "heroW":
-                this.game.context.fillText("You have chosen W to upgrade", 50, 50)
+            case "stage2":
+                this.game.context.fillText("Farm is fun, right? Try Medium camp now.",l.hint0.startX, l.hint0.startY)
                 break
-            case "heroE":
-                this.game.context.fillText("You have chosen E to upgrade", 50, 50)
+            case "stage3":
+                this.game.context.fillText("If your teammate ask you, why farm jungle", l.hint0.startX, l.hint0.startY)
+                break
+            case "stage4":
+                this.game.context.fillText("Start of all, farm some lane creeps.", l.hint0.startX, l.hint0.startY)
+                break
+            case "stage5":
+                this.game.context.fillText("Ready to fight some powerful creeps!", l.hint0.startX, l.hint0.startY)
                 break
         }
     }
 
     update() {
         var self = this
-        log("update", this.chooseDone)
           if(!self.chooseDone) {
-              self.game.canvas.addEventListener('mouseup', this.selectStage, false)
+              // self.game.canvas.addEventListener('mouseup', this.selectStage, false)
           } else {
-              self.game.canvas.addEventListener('mouseup', doneStageChosen, false)
+              self.game.canvas.addEventListener('mouseup', this.goToFight, false)
               //Choose
-              function doneStageChosen(e) {
-                  log("done")
-                  var x = e.offsetX
-                  var y = e.offsetY
-                  var xt = self.layout.fightButton.startX
-                  var yt = self.layout.fightButton.startY
-                  var w = self.layout.fightButton.width
-                  var h = self.layout.fightButton.height
-                  if(chosen(x, y, xt, yt, w, h)){
-                      if(self.chooseDone) {
-                          self.initStage(self.game)
-                          self.game.canvas.removeEventListener('mouseup', self.selectStage, false)
-                          self.game.canvas.removeEventListener('mouseup', self.goToShop, false)
-                          self.game.canvas.removeEventListener('mouseup', doneStageChosen, false)
-                          var s = SceneFight.new(self.game, self.hero, self.enemiesObj)
-                          self.game.replaceScene(s)
-                      } else {
-                          log("Not done choose stage yet!")
-                      }
-                  }
-              }
+
           }
 
           // if(chooseDone) {
@@ -135,7 +147,7 @@ class SceneMap extends Scene {
     }
     initStage(game) {
         switch(this.chosenStage) {
-            case "stage1":
+            case "stage0":
                 var enemiesCamp = randomChooseAmong("koboldCamp")
                 switch(enemiesCamp) {
                     case"koboldCamp":
@@ -150,14 +162,16 @@ class SceneMap extends Scene {
               }
         }
     }
-    selectStage(e) {
-        var x = e.offsetX
-        var y = e.offsetY
-        if(chosen(x, y, 500, 300, 128, 128)){
-            progress.game.scene.chosenStage = "stage1"
-            progress.game.scene.chooseDone = true
-        }
-    }
+    // selectStage(e) {
+    //     var x = e.offsetX
+    //     var y = e.offsetY
+    //     var
+    //     log(x, y)
+    //     if(chosen(x, y, 1169, 445, 128, 128)){
+    //         progress.game.scene.chosenStage = "stage1"
+    //         progress.game.scene.chooseDone = true
+    //     }
+    // }
     goToShop(e) {
         var x = e.offsetX
         var y = e.offsetY
@@ -168,10 +182,33 @@ class SceneMap extends Scene {
         var h = l.shopButton.height
         if(chosen(x, y, xt, yt, w, h)){
             var g = progress.game
-            g.canvas.removeEventListener('mouseup', g.scene.selectStage, false)
+            // g.canvas.removeEventListener('mouseup', g.scene.selectStage, false)
             g.canvas.removeEventListener('mouseup', g.scene.goToShop, false)
+            g.canvas.removeEventListener('mouseup', g.scene.goToFight, false)
             var s = SceneShop.new(g)
             g.replaceScene(s)
+        }
+    }
+    goToFight(e) {
+        var self = progress.game.scene
+        var x = e.offsetX
+        var y = e.offsetY
+        var xt = self.layout.fightButton.startX
+        var yt = self.layout.fightButton.startY
+        var w = self.layout.fightButton.width
+        var h = self.layout.fightButton.height
+        log(x, y)
+        if(chosen(x, y, xt, yt, w, h)){
+            if(self.chooseDone) {
+                self.initStage(self.game)
+                // self.game.canvas.removeEventListener('mouseup', self.selectStage, false)
+                self.game.canvas.removeEventListener('mouseup', self.goToShop, false)
+                self.game.canvas.removeEventListener('mouseup', self.goToFight, false)
+                var s = SceneFight.new(progress.game, self.hero, self.enemiesObj)
+                self.game.replaceScene(s)
+            } else {
+                log("Not done choose stage yet!")
+            }
         }
     }
 }

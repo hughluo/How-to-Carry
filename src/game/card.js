@@ -1,10 +1,10 @@
 class Card {
-    constructor(game) {
+    constructor(game, level) {
         this.game = game
+        this.level = level
         this.name = "class card name"
         this.nickname = "class card nickname"
         this.casted = false
-        this.level = 1
         this.image = this.game.imageByName(this.nickname,0 ,0).image
         this.layoutX = - 500
         this.layoutY = - 500
@@ -13,8 +13,8 @@ class Card {
         this.manaCost = [0,0,0,0,0]
 
     }
-    static new(game) {
-        var i = new this(game)
+    static new(game, level) {
+        var i = new this(game, level)
         return i
     }
     cast() {

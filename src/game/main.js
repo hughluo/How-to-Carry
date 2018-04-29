@@ -39,6 +39,7 @@ var __main = function() {
         buyButton: 'img/button/buy.png',
         mapButton: 'img/button/map.png',
         shopButton: 'img/button/shop.png',
+        upgradeButton: 'img/button/upgrade.png',
         //sceneShop
         healingSalve: 'img/item/healing_salve.png',
         clarity: 'img/item/clarity.png',
@@ -52,8 +53,17 @@ var __main = function() {
         //scene fight
         endTurnButton: 'img/button/end_turn.png',
         //map
-        map:'img/map/map.png',
-        mapTower:'img/map/tower.png',
+        // map:'img/map/map.png',
+        // mapTower:'img/map/tower.png',
+        dialog: 'img/map/dialog.png',
+        s0: 'img/map/s0.png',
+        s1: 'img/map/s1.png',
+        s2: 'img/map/s2.png',
+        s3: 'img/map/s3.png',
+        s4: 'img/map/s4.png',
+        s5: 'img/map/s5.png',
+        s6: 'img/map/s6.png',
+        s7: 'img/map/s7.png',
         //dk images
         dk:'img/dk/dk.png',
         dkBg:'img/dk/dk_bg.jpg',
@@ -79,6 +89,7 @@ var __main = function() {
         buffMorbidMask: 'img/buff/buff_morbid_mask.png',
         buffQuellingBlade: 'img/buff/buff_quelling_blade.png',
         buffSkullBasher: 'img/buff/buff_skull_basher.png',
+        buffDkE: 'img/buff/buff_dk_e.png',
         //enemies
         kobold:'img/enemy/kobold.png',
         koboldSoldier:'img/enemy/kobold_soldier.png',

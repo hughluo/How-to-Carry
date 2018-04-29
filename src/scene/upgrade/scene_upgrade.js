@@ -50,6 +50,13 @@ class SceneUpgrade extends Scene {
 
                 },
             },
+            upgradeButton: {
+                startX: 1100,
+                startY: 700,
+                width: 90,
+                height: 27,
+
+            },
             doneButton: {
                 startX: 1200,
                 startY: 700,
@@ -72,16 +79,20 @@ class SceneUpgrade extends Scene {
                     // this.layout.heroAbi.startX, this.layout.heroAbi.startYR))
                 break
         }
+        this.game.canvas.addEventListener('mouseup',this.confirmUpgrade, false)
     }
     draw() {
       // TODO: hero_dic.js
-        var l = this.layout
         if(!this.upgradeDone) {
+            drawByName("upgradeButton")
+        }
+        drawByName("doneButton")
+        var l = this.layout
+        if(true) {
             this.game.context.fillText("Hp: " + this.hero.hpCurrent + "/" + this.hero.hpMax, l.heroHp.startX,
                 l.heroHp.startY)
             this.game.context.fillText("Mp: " + this.hero.mpCurrent + "/" + this.hero.mpMax, l.heroMp.startX,
                 l.heroMp.startY)
-            this.game.context.drawImage(this.game.images.doneButton, l.doneButton.startX, l.doneButton.startY)
             this.game.context.fillText("Level: " + progress.heroQ + "/4",
                 l.heroAbiText.level.startX, l.heroAbiText.level.startYQ)
             this.game.context.fillText("Level: " + progress.heroW + "/4",
@@ -102,6 +113,9 @@ class SceneUpgrade extends Scene {
             case "heroE":
                 this.game.context.fillText("You have chosen E to upgrade", 50, 50)
                 break
+            case "done":
+                this.game.context.fillText("Click Done back to map!", 50, 50)
+                break
         }
 
     }
@@ -109,7 +123,7 @@ class SceneUpgrade extends Scene {
     update() {
         var self = this
         if(!this.chooseDone) {
-            self.game.canvas.addEventListener('mouseup', this.chooseAbi, false)
+            self.game.canvas.addEventListener('mouseup', self.chooseAbi, false)
         } else {
             self.game.canvas.addEventListener('mouseup',doneUpgrade, false)
             //Choose
@@ -122,9 +136,12 @@ class SceneUpgrade extends Scene {
                 var h = self.layout.doneButton.height
                 if(chosen(x, y, xt, yt, w, h)){
                     if(self.chooseDone) {
-                        self.game.canvas.removeEventListener('mouseup', self.chooseAbi, false)
+                        // self.game.canvas.removeEventListener('mouseup', self.confirmUpgrade, false)
+                        // self.game.canvas.removeEventListener('mouseup', self.chooseAbi, false)
                         self.game.canvas.removeEventListener('mouseup', doneUpgrade, false)
-                        var s = SceneMap.new(self.game, self.hero)
+
+                        // log(self.game.cardSet)
+                        var s = SceneMap.new(progress.game, self.hero)
                         self.game.replaceScene(s)
                     } else {
                         log("Not done upgrade yet!")
@@ -157,5 +174,42 @@ class SceneUpgrade extends Scene {
             self.chosenAbility = "heroE"
             self.chooseDone = true
         }
-      }
+    }
+    confirmUpgrade(e) {
+        var self = progress.game.scene
+        var x = e.offsetX
+        var y = e.offsetY
+        var xt = self.layout.upgradeButton.startX
+        var yt = self.layout.upgradeButton.startY
+        var w = self.layout.upgradeButton.width
+        var h = self.layout.upgradeButton.height
+        if(chosen(x, y, xt, yt, w, h)) {
+            // progress[self.chosenAbility] += 1
+            // TODO: realize through ability. learn (if level = 0) and upgrade
+            self.excuteUpgrade()
+            self.upgradeDone = true
+            self.chosenAbility = "done"
+            self.game.canvas.removeEventListener('mouseup', self.chooseAbi, false)
+            self.game.canvas.removeEventListener('mouseup', self.confirmUpgrade, false)
+        }
+    }
+    excuteUpgrade() {
+        var self = progress.game.scene
+        var c = "A" + self.hero.nickname + self.chosenAbility.charAt(4)
+        var a = eval(c+".new(progress.game)")
+        a.upgrade()
+    }
+    cardByNickname(nickname) {
+        return cardDic[nickname](this.game)
+    }
+    // loadCardSet() {
+    //     var g = progress.game
+    //     var self = progress.game.scene
+    //     log(self.name)
+    //     var len = Object.keys(progress.cardSet).length
+    //     for (var i = 0; i < len; i++) {
+    //         var c = self.cardByNickname(progress.cardSet[i])
+    //         self.game.cardSet[i] = c
+    //    }
+    // }
 }

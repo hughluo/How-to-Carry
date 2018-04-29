@@ -13,7 +13,6 @@ class SceneFight extends Scene {
         this.enemiesConfig.numCurrent = this.enemiesConfig.numLoaded
         this.game = game
         this.hero = hero
-        //buff and debuff // TODO: realize
         this.playerBuffConfig = {
             buff: {
 
@@ -41,6 +40,7 @@ class SceneFight extends Scene {
         //this.cardConfig.cardSet = config.cardSet
         // TODO: player turn and enemy turn
         //there is interval between playerTurn and enemiesTurn to display animation etc.
+        this.turn = 1
         this.playerTurn = true
         this.enemiesTurn = false
         //
@@ -143,6 +143,14 @@ class SceneFight extends Scene {
                 slotX: [75, 275, 475, 675, 875, 1075, 1275],
                 slotY: 500,
             },
+            money: {
+                startX: 1250,
+                startY: 80,
+            },
+            turn: {
+                startX: 1250,
+                startY: 100,
+            },
         }
 
         this.interface = {
@@ -160,11 +168,13 @@ class SceneFight extends Scene {
               this.enemies[i].image.y = this.layout.enemiesImg.slotY
       }
       //card
+      // TODO: re write.
       var len = Object.keys(progress.cardSet).length
       for (var i = 0; i < len; i++) {
           var c = this.cardByNickname(progress.cardSet[i])
           this.cardConfig.cardSet[i] = c
       }
+      // this.cardConfig.cardSet = progress.game.cardSet
       this.cardConfig.cardSetNum = Object.keys(this.cardConfig.cardSet).length
       this.cardConfig.cardDeck = this.cardConfig.cardSet
 
@@ -230,6 +240,7 @@ class SceneFight extends Scene {
     }
     init() {
         this.drawCard()
+        this.grantBuff()
     }
     testset(game, enemies) {
       //keyboard for testing purpose
@@ -240,10 +251,10 @@ class SceneFight extends Scene {
             loadGame()
         })
         this.game.registerAction('o', function(){
-            log(game.scene.enemies)
+            log(progress.game.cardSet)
         })
         this.game.registerAction('x', function(){
-
+            log(game.scene.currentAction)
         })
         // this.cardConfig.cardHand[0] = Attack.new(game)
         // this.cardConfig.cardHand[1] = Attack.new(game)
@@ -258,9 +269,7 @@ class SceneFight extends Scene {
               this.enemies[i]['debuff'] = this.enemies[i]['debuff'].filter(d => d.duration > 0)
           }
       }
-
-
-        this.grantBuff()
+      
         this.cardNumUpdate()
         this.cardHandLayoutSet()
         this.cardHandCastedCheck()
@@ -270,6 +279,7 @@ class SceneFight extends Scene {
         if (this.enemiesConfig.numCurrent == 0) {
             config.enemyChosenMode = false
             log("victory!")
+            this.stageClear()
         }
         if(config.enemyChosenMode || this.cardConfig.cardHandNum == 0) {
           config.cardChosenMode = false
@@ -278,6 +288,8 @@ class SceneFight extends Scene {
     draw() {
         this.game.context.font="20px Verdana"
         this.game.context.fillStyle="black"
+        this.game.context.fillText("Gold: " + this.game.money, this.layout.money.startX, this.layout.money.startY )
+        this.game.context.fillText("Turn: " + this.turn, this.layout.turn.startX, this.layout.turn.startY )
         this.displayTurn()
         this.displayHint()
         this.displayHero()
@@ -285,9 +297,6 @@ class SceneFight extends Scene {
         this.displayEnemies()
         this.displayCardNum()
         this.displayCardHand()
-        // TODO: buff
-        // var b = this.game.imageByName('bTimelock', this.layout.buff.startX, this.layout.buff.startY)
-        // this.game.context.drawImage(b.image, b.x, b.y)
 
     }
 
@@ -295,8 +304,15 @@ class SceneFight extends Scene {
         if(this.cardConfig.cardHandNum != 0) {
                 this.chooseCard()
         }
+        // if(!config.cardUseMode && this.currentAction != null) {
         if(this.currentAction != null) {
+            if(this.currentAction.manaCost <= this.hero.mpCurrent) {
                 this.useCard()
+                // config.cardUseMode = true
+            } else {
+                this.currentAction = null
+                this.cardConfig.currentCardHand = null
+            }
         }
     }
 
@@ -319,18 +335,21 @@ class SceneFight extends Scene {
         config.cardChosenMode = true
         var c = this.cardConfig.currentCardHand
         if(c != null) {
-            c.cast()
             config.cardChosenMode = false
+            c.cast()
             this.cardConfig.currentCardHand = null
         }
     }
     useCard() {
       // TODO: manacost cardChoiceCheck and rechoice!
+
         var a = this.currentAction
+        // this.hero.mpCurrent -= a.manaCost
         runAction:
         switch(a.affect) {
             case "Enemy":
                 while (this.enemiesConfig.numCurrent != 0 && a.target > 0){
+                    log("mode switch")
                     config.enemyChosenMode = true
                     var t = this.currentAction.currentTarget
                     if(t != null) {
@@ -340,17 +359,31 @@ class SceneFight extends Scene {
                     }
                 }
                 //casted
+                this.hero.mpCurrent -= a.manaCost
+                this.currentAction.from.casted = true
+                this.currentAction = null
+                break
+            case "AllEnemy":
+                for(var i = 0; i < this.enemiesConfig.numLoaded; i++) {
+                    if(this.enemies[i]) {
+                        this.currentAction.currentTarget = this.enemies[i]
+                        log(this.currentAction.currentTarget)
+                        this.useCardToEnemy()
+                    }
+                }
+                this.hero.mpCurrent -= a.manaCost
                 this.currentAction.from.casted = true
                 this.currentAction = null
                 break
         }
+        config.cardUseMode = false
     }
     useCardToEnemy() {
         var a = this.currentAction
         var t = a.currentTarget
         switch(a.type) {
             case "Magic":
-                this.hero.mpCurrent -= a.manaCost
+                // this.hero.mpCurrent -= a.manaCost
                 if(a.damage != null) {
                     t.hpCurrent -= a.damage
                 }
@@ -364,38 +397,36 @@ class SceneFight extends Scene {
                 }
                 break
             case "Attack":
-                this.hero.mpCurrent -= a.manaCost
+                // this.hero.mpCurrent -= a.manaCost
                 if(a.damage != null) {
                     t.hpCurrent -= a.damage
+                    var ls = Math.ceil(a.damage * this.hero.lifesteal)
+                    if (this.hero.hpCurrent + ls < this.hero.hpMax) {
+                        this.hero.hpCurrent += ls
+                    } else {
+                        this.hero.hpCurrent = this.hero.hpMax
+                    }
                 }
                 //handle attack modifier
                 var m = this.game.hero.atkModify
                 var len = Object.keys(m).length
                 for (var i = 0; i < len; i++) {
-                    switch(m[i].type) {
-                        case "damage":
-                            if(chanceProc(m[i].chance)) {
-                                t.hpCurrent -= m[i].damage
-                            }
-                            break
-                        case "lifesteal":
-                            this.hero.hpCurrent += Math.ceil(a.damage * m[i].lifesteal)
-                            break
-                        case "stun":
-                            if(chanceProc(m[i].chance)) {
-                                t.hpCurrent -= m[i].damage
-                                var d = AStun.new(this.game, 0, m[i].nickname, m[i].duration)
-                                var i = this.currentAction.currentTargetSlot
-                                var j = this.enemies[i]['debuff'].length
-                                d.layoutX = this.layout.enemiesBuff.slotX[i][j]
-                                d.layoutY = this.layout.enemiesBuff.slotY
-                                log(d)
-                                t.debuff.push(d)
-                            }
-                            break
+                    if(m[i].type == "damage") {
+                        if(chanceProc(m[i].chance)) {
+                            t.hpCurrent -= m[i].damage
+                        }
+                    } else if (m[i].type == "stun") {
+                          if(chanceProc(m[i].chance)) {
+                              t.hpCurrent -= m[i].damage
+                              var d = AStun.new(this.game, 1, m[i].nickname, m[i].duration)
+                              var i = this.currentAction.currentTargetSlot
+                              var j = this.enemies[i]['debuff'].length
+                              d.layoutX = this.layout.enemiesBuff.slotX[i][j]
+                              d.layoutY = this.layout.enemiesBuff.slotY
+                              t.debuff.push(d)
+                          }
                     }
                 }
-                break
         }
         config.enemyChosenMode = false
         this.currentAction.currentTarget = null
@@ -528,10 +559,46 @@ class SceneFight extends Scene {
                 this.shuffleCard()
             }
              setTimeout(function(){
-               this.game.scene.playerTurn = true
-               this.game.scene.drawCard()
+                this.game.scene.initPlayerTurn()
              }, 3000)
         }
+    }
+    initPlayerTurn () {
+        this.game.scene.playerTurn = true
+        var h = this.game.hero
+        log(h.hpRegenEx)
+        if(h.hpMax > h.hpCurrent + h.hpRegen + h.hpRegenEx) {
+           h.hpCurrent += h.hpRegen
+           h.hpCurrent += h.hpRegenEx
+        } else {
+           h.hpCurrent = h.hpMax
+        }
+        if(h.mpMax > h.mpCurrent + h.mpRegen + h.mpRegenEx) {
+           h.mpCurrent += h.mpRegen
+           h.mpCurrent += h.mpRegenEx
+        } else {
+           h.mpCurrent = h.mpMax
+        }
+        h.hpRegenEx = 0
+        h.mpRegenEx = 0
+        this.game.scene.buffEveryTurn()
+        this.game.scene.grantBuff()
+        this.game.scene.drawCard()
+        this.game.scene.turn ++
+    }
+    buffEveryTurn() {
+        log("buff e t")
+        var l = this.game.scene.layout
+        var buffs = this.game.hero.buff
+
+        var len = Object.keys(buffs).length
+        for(var i = 0; i < len; i++) {
+            if(buffs[i].grantEveryTurn) {
+                buffs[i].granted = false
+                log(buffs[i].nickname)
+            }
+        }
+        log(buffs)
     }
     enemiesAliveCheck() {
         for (var i = 0; i < this.enemiesConfig.numLoaded; i++) {
@@ -541,6 +608,7 @@ class SceneFight extends Scene {
         }
         for (var i = 0; i < this.enemiesConfig.numLoaded; i++) {
             if(this.enemies[i]&&!this.enemies[i].alive) {
+                this.game.money += this.enemies[i].bounty
                 delete this.enemies[i]
                 this.enemiesConfig.numCurrent --
             }
@@ -626,7 +694,6 @@ class SceneFight extends Scene {
             if(this.cardConfig.cardHandSlot[i]){
                 var k = this.cardConfig.cardHandSlot[i]
                 if(this.cardConfig.cardHand[k]&&this.cardConfig.cardHand[k].casted) {
-                    //// TODO: move casted card to cardFold
                     this.cardConfig.cardFoldNum = Object.keys(this.cardConfig.cardFold).length
                     var n = this.cardConfig.cardFoldNum
                     this.cardConfig.cardFoldSlot[n] = k
@@ -637,5 +704,12 @@ class SceneFight extends Scene {
                 }
             }
         }
+    }
+    stageClear() {
+          this.game.clearRegisterAction()
+          this.game.clearRegisterContAction()
+          // TODO: switch to scene vic.
+          var s = SceneStageClear.new(this.game, this.turn)
+          this.game.replaceScene(s)
     }
 }

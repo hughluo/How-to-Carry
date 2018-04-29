@@ -1,11 +1,11 @@
 class DkQ extends Card {
-    constructor(game) {
-        super(game)
+    constructor(game, level) {
+        super(game, level)
         this.game = game
+        this.level = level
         this.name = "Breathe Fire"
         this.nickname = "dkQ"
         this.setup()
-        this.level = 1
         this.damage = [0,9,17,24,30]
         this.manaCost = [0,10,11,12,13]
 
@@ -13,7 +13,7 @@ class DkQ extends Card {
     }
 
     setup() {
-        this.image = this.game.imageByName(this.nickname,0 ,0).image
+        this.image = this.game.images[this.nickname]
     }
 
     cast() {
@@ -23,16 +23,17 @@ class DkQ extends Card {
             type: "Magic",
             from: this,
             done: false,
-            manacost: this.manaCost[this.level],
+            manaCost: this.manaCost[this.level],
             affect: "AllEnemy",
             target: 0,
             damage: this.damage[this.level],
-            debuff: {
-                // affect: "AllEnemy",
-                // type: "AtkDown",
-                // value: 0.35,
-                // duration: 1,
-            },
+            // debuff: {
+            //     // affect: "AllEnemy",
+            //     // type: "AtkDown",
+            //     // value: 0.35,
+            //     // duration: 1,
+            // },
         }
+        log("casted")
     }
 }

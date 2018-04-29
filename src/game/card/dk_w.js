@@ -1,11 +1,11 @@
 class DkW extends Card {
-    constructor(game) {
-        super(game)
+    constructor(game, level) {
+        super(game, level)
         this.game = game
+        this.level = level
         this.name = "Dragon Tail"
         this.nickname = "dkW"
         this.setup()
-        this.level = 1
         this.damage = [0,0,0,0,0]
         this.manaCost = [0,10,10,10,10]
 
@@ -13,7 +13,7 @@ class DkW extends Card {
     }
 
     setup() {
-        this.image = this.game.imageByName(this.nickname,0 ,0).image
+        this.image = this.game.images[this.nickname]
     }
 
     cast() {

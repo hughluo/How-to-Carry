@@ -3,6 +3,7 @@ var config = {
     abilityChosen: false,
     enemyChosenMode: false,
     cardChosenMode: true,
+    cardUseMode: false,
     confirmMode: false,
     confirmed: false,
     atkDone: false,

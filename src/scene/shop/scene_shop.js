@@ -3,6 +3,7 @@ class SceneShop extends Scene {
         super(game)
         this.name = "shop"
         this.game = game
+        this.hero = this.game.hero
         this.setup(game)
         this.elements = []
         // TODO: chosenItem should be an instance of class item
@@ -79,6 +80,22 @@ class SceneShop extends Scene {
                 startX: 150,
                 startY: 390,
             },
+            heroHp: {
+                startX: 1050,
+                startY: 270,
+            },
+            heroMp: {
+                startX: 1050,
+                startY: 300,
+            },
+            heroImg: {
+                startX: 1000,
+                startY: 300,
+                endX: 350,
+                endY: 450,
+                singleX: 250,
+                singleY: 250,
+            },
         }
         this.game.canvas.addEventListener('mouseup',this.backToMap, false)
         this.game.canvas.addEventListener('mouseup',this.confirmBuy, false)
@@ -95,13 +112,16 @@ class SceneShop extends Scene {
 
     }
     draw() {
-
         var l = this.layout
         var i = this.game.image
         // this.game.context.drawImage(i.buyButton, l.buyButton.startX, l.buyButton.startY)
         // this.game.context.drawImage(i.mapButton, l.mapButton.startX, l.mapButton.startY)
+
         //
         drawByName("bgY")
+
+        this.displayHero()
+
         drawByName("buyButton")
         drawByName("mapButton")
         drawByName("healingSalve")
@@ -142,11 +162,11 @@ class SceneShop extends Scene {
         var w = 88
         var h = 64
         if(chosen(x, y, l.healingSalve.startX, l.healingSalve.startY, w, h)) {
-            self.chosenItem = "healingSalve"
+            self.chosenItem = IHealingSalve.new(self.game)
         } else if (chosen(x, y, l.tango.startX, l.tango.startY, w, h)) {
             self.chosenItem = "tango"
         } else if (chosen(x, y, l.clarity.startX, l.clarity.startY, w, h)) {
-            self.chosenItem = "clarity"
+            self.chosenItem = IClariy.new(self.game)
         } else if (chosen(x, y, l.quellingBlade.startX, l.quellingBlade.startY, w, h)) {
             self.chosenItem = IQuellingBlade.new(self.game)
         } else if (chosen(x, y, l.battleFury.startX, l.battleFury.startY, w, h)) {
@@ -211,5 +231,14 @@ class SceneShop extends Scene {
         }
         addItemObj(nickname) {
 
+        }
+        displayHero() {
+            log("should display")
+            var h = this.game.imageByName(this.hero.nickname+"Img", this.layout.heroImg.startX, this.layout.heroImg.startY)
+            this.game.context.drawImage(h.image, h.x, h.y)
+            this.game.context.fillText("Hp: " + this.hero.hpCurrent + "/" + this.hero.hpMax, this.layout.heroHp.startX,
+                this.layout.heroHp.startY)
+            this.game.context.fillText("Mp: " + this.hero.mpCurrent + "/" + this.hero.mpMax, this.layout.heroMp.startX,
+                this.layout.heroMp.startY)
         }
 }

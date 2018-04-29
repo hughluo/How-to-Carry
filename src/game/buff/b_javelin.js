@@ -1,6 +1,7 @@
 class BJavelin extends Buff {
     constructor(game) {
         super(game)
+        this.nickname = "buffJavelin"
         this.image = this.game.images.buffJavelin
         this.granted = false
     }

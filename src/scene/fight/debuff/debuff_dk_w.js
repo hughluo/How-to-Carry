@@ -5,7 +5,7 @@ class DebuffDkW extends Debuff {
       this.alive = true
       this.name = "Dragon Tail"
       this.nickname = "debuffDkW"
-      this.image = this.game.imageByName(this.nickname,0 ,0).image
+      this.image = this.game.images[this.nickname]
       this.layoutX = 0
       this.layoutY = 0
       this.target = null
